@@ -17,9 +17,9 @@ import ChatIcon from "@mui/icons-material/Chat";
 export default function Home() {
   const [messages, setMessages] = useState([
     {
-      role: "assistant",
+      role: "system",
       content:
-        "Hi! I'm the Headstarter support assistant. How can I help you today?",
+        "Hi! I'm the Headstarter support system. How can I help you today?",
     },
   ]);
   const [message, setMessage] = useState("");
@@ -40,7 +40,7 @@ export default function Home() {
     setMessages((messages) => [
       ...messages,
       { role: "user", content: message },
-      { role: "assistant", content: "" },
+      { role: "system", content: "" },
     ]);
 
     try {
@@ -77,7 +77,7 @@ export default function Home() {
       setMessages((messages) => [
         ...messages,
         {
-          role: "assistant",
+          role: "system",
           content:
             "I'm sorry, but I encountered an error. Please try again later.",
         },
@@ -217,12 +217,12 @@ export default function Home() {
                   key={index}
                   display="flex"
                   justifyContent={
-                    message.role === "assistant" ? "flex-start" : "flex-end"
+                    message.role === "system" ? "flex-start" : "flex-end"
                   }
                 >
                   <Box
                     bgcolor={
-                      message.role === "assistant"
+                      message.role === "system"
                         ? "primary.main"
                         : "secondary.main"
                     }
