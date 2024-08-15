@@ -1,95 +1,242 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import {
+  Box,
+  Button,
+  Stack,
+  TextField,
+  IconButton,
+  useTheme,
+  darken,
+} from "@mui/material";
+import { useState, useRef, useEffect } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import ChatIcon from "@mui/icons-material/Chat";
 
 export default function Home() {
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      content:
+        "Hi! I'm the Headstarter support assistant. How can I help you today?",
+    },
+  ]);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const theme = useTheme();
+
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
+  const sendMessage = async () => {
+    if (!message.trim() || isLoading) return;
+    setIsLoading(true);
+
+    setMessage("");
+    setMessages((messages) => [
+      ...messages,
+      { role: "user", content: message },
+      { role: "assistant", content: "" },
+    ]);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([...messages, { role: "user", content: message }]),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const text = decoder.decode(value, { stream: true });
+        setMessages((messages) => {
+          let lastMessage = messages[messages.length - 1];
+          let otherMessages = messages.slice(0, messages.length - 1);
+          return [
+            ...otherMessages,
+            { ...lastMessage, content: lastMessage.content + text },
+          ];
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessages((messages) => [
+        ...messages,
+        {
+          role: "assistant",
+          content:
+            "I'm sorry, but I encountered an error. Please try again later.",
+        },
+      ]);
+    }
+    setIsLoading(false);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <Box width="100vw" height="100vh" display="flex" flexDirection="column">
+      {/* Use WebsiteHeader component */}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* Chat Button */}
+      {!isChatOpen && (
+        <IconButton
+          onClick={toggleChat}
+          sx={{
+            position: "fixed",
+            bottom: 16,
+            right: 16,
+            bgcolor: "primary.main",
+            color: "white",
+            zIndex: 999,
+          }}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+          <ChatIcon />
+        </IconButton>
+      )}
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* Chat Box */}
+      {isChatOpen && (
+        <Box
+          sx={{
+            position: "fixed",
+            right: 16,
+            bottom: 40,
+            height: "80vh",
+            width: "400px", // Default width for larger screens
+            bgcolor: theme.palette.background.paper,
+            boxShadow: `0 4px 8px ${theme.palette.primary.main}`, // Use primary color for shadow
+            borderRadius: 5,
+            border: "none",
+            zIndex: 999,
+            display: "flex",
+            flexDirection: "column",
+            // Responsive styles
+            [theme.breakpoints.down("xs")]: {
+              width: "90%", // Adjust width for small screens
+              right: "5%", // Center horizontally
+              bottom: "20px", // Bring closer to the bottom
+            },
+            [theme.breakpoints.down("sm")]: {
+              width: "90%", // Adjust width for small screens
+              right: "5%", // Center horizontally
+              bottom: "20px", // Bring closer to the bottom
+            },
+          }}
         >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+          <Stack direction="column" p={2} spacing={3} height="100%">
+            {/* Chat Header with "Customer Support" and Close Button */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: 2,
+                color: darken(theme.palette.primary.main, 0.5),
+                borderRadius: 5,
+              }}
+            >
+              <ChatIcon />
+              <Box
+                sx={{
+                  fontSize: "1.3rem",
+                  [theme.breakpoints.down("sm")]: { fontSize: "1.1rem" },
+                }}
+              >
+                Customer Support
+              </Box>
+              <IconButton
+                onClick={toggleChat}
+                sx={{
+                  color: darken(theme.palette.primary.main, 0.5),
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+            {/* Chat Messages */}
+            <Stack
+              direction={"column"}
+              spacing={2}
+              flexGrow={1}
+              overflow="auto"
+              maxHeight="100%"
+            >
+              {messages.map((message, index) => (
+                <Box
+                  key={index}
+                  display="flex"
+                  justifyContent={
+                    message.role === "assistant" ? "flex-start" : "flex-end"
+                  }
+                >
+                  <Box
+                    bgcolor={
+                      message.role === "assistant"
+                        ? "primary.main"
+                        : "secondary.main"
+                    }
+                    color="white"
+                    borderRadius={16}
+                    p={3}
+                  >
+                    {message.content}
+                  </Box>
+                </Box>
+              ))}
+              <div ref={messagesEndRef} />
+            </Stack>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+            {/* Chat Input */}
+            <Stack direction={"row"} spacing={2} p={2}>
+              <TextField
+                label="Message"
+                fullWidth
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={isLoading}
+              />
+              <Button
+                variant="contained"
+                onClick={sendMessage}
+                disabled={isLoading}
+              >
+                {isLoading ? "Sending..." : "Send"}
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      )}
+    </Box>
   );
 }
