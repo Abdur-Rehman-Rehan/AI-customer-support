@@ -19,7 +19,7 @@ export default function Home() {
     {
       role: "system",
       content:
-        "Hi! I'm the Headstarter support system. How can I help you today?",
+        "Hi! I'm the Travel agency support system. How can I help you today?",
     },
   ]);
   const [message, setMessage] = useState("");
