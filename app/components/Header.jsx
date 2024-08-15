@@ -18,7 +18,7 @@ const Header = ({ toggleDarkMode, mode }) => {
         {/* GitHub Icon Link */}
         <IconButton
           component="a"
-          href="https://github.com/Abdur-Rehman-Rehan/pantry-tracker"
+          href="https://github.com/Abdur-Rehman-Rehan/AI-customer-support"
           target="_blank"
           sx={{
             color: "primary.main",
