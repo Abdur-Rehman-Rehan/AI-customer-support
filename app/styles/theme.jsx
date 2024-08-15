@@ -1,53 +1,84 @@
+// styles/theme.jsx
 import { createTheme } from "@mui/material/styles";
 
+// Define light theme
 export const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#008080",
+      main: "#00796b", // Light teal color
     },
     secondary: {
-      main: "#328da8",
-    },
-    table: {
-      main: "#8a8787",
+      main: "#f50057", // Example secondary color
     },
     background: {
-      default: "#f5f5f5",
-      paper: "#f5f5f5",
+      default: "#c9c9c9", // Light background
+      paper: "#c9c9c9", // Paper background
     },
     text: {
-      primary: "#000000",
-      secondary: "#000000",
+      primary: "#333333", // Primary text color
+      secondary: "#ffffff", // Secondary text color
     },
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
+    fontFamily: ["Roboto", "Arial", "sans-serif"].join(","),
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px", // Rounded corners
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px", // Rounded corners
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Light shadow for modern feel
+        },
+      },
+    },
   },
 });
 
+// Define dark theme
 export const darkTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#03dac6",
+      main: "#04d197", // Light teal color in dark mode
     },
     secondary: {
-      main: "#03dac6",
+      main: "#d94174", // Example light secondary color in dark mode
     },
     background: {
-      default: "#121212",
-      paper: "#121212",
-    },
-    table: {
-      main: "#302f2f",
+      default: "#1e1e1e", // Dark background
+      paper: "#2e2e2e", // Paper background
     },
     text: {
-      primary: "#ffffff",
-      secondary: "#121212",
+      primary: "#e0e0e0", // Primary text color
+      secondary: "#000000", // Secondary text color
     },
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
+    fontFamily: ["Roboto", "Arial", "sans-serif"].join(","),
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px", // Rounded corners
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px", // Rounded corners
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)", // Darker shadow for modern feel
+        },
+      },
+    },
   },
 });

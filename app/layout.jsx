@@ -23,11 +23,7 @@ export default function RootLayout({ children }) {
             toggleDarkMode={toggleDarkMode}
             mode={darkMode ? "dark" : "light"}
           />
-          <main style={{ minHeight: "calc(100vh - 64px)" }}>
-            {" "}
-            {/* Adjust 64px to the height of your header */}
-            {children}
-          </main>
+          <main>{children}</main>
         </ThemeProvider>
       </body>
     </html>

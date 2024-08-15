@@ -8,6 +8,7 @@ import {
   IconButton,
   useTheme,
   darken,
+  Typography,
 } from "@mui/material";
 import { useState, useRef, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
@@ -103,9 +104,26 @@ export default function Home() {
   }, [messages]);
 
   return (
-    <Box width="100vw" height="100vh" display="flex" flexDirection="column">
-      {/* Use WebsiteHeader component */}
-
+    <Box
+      width="100vw"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+    >
+      <Box
+        width="50vw"
+        height="50vh"
+        alignContent="center"
+        justifyContent="center"
+      >
+        <Typography variant="h3" color="primary">
+          Your Content here.
+        </Typography>
+        <Typography variant="h3" color="primary">
+          For Support Box check bottom right corner.
+        </Typography>
+      </Box>
       {/* Chat Button */}
       {!isChatOpen && (
         <IconButton
@@ -117,6 +135,9 @@ export default function Home() {
             bgcolor: "primary.main",
             color: "white",
             zIndex: 999,
+            "&:hover": {
+              bgcolor: "secondary.main",
+            },
           }}
         >
           <ChatIcon />
@@ -160,7 +181,7 @@ export default function Home() {
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: 2,
-                color: darken(theme.palette.primary.main, 0.5),
+                color: theme.palette.primary.main,
                 borderRadius: 5,
               }}
             >
@@ -176,7 +197,7 @@ export default function Home() {
               <IconButton
                 onClick={toggleChat}
                 sx={{
-                  color: darken(theme.palette.primary.main, 0.5),
+                  color: theme.palette.primary.main,
                 }}
               >
                 <CloseIcon />
@@ -205,9 +226,9 @@ export default function Home() {
                         ? "primary.main"
                         : "secondary.main"
                     }
-                    color="white"
-                    borderRadius={16}
-                    p={3}
+                    color="text.secondary"
+                    borderRadius={7}
+                    p={1.75}
                   >
                     {message.content}
                   </Box>
